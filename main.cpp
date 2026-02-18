@@ -27,15 +27,26 @@ int main()
 	glfwWindowHintString(GLFW_OPENGL_PROFILE, "core"); //Pakiet funkcji OpenGL
 
 	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f, //lewy dolny rog
-		 0.5f, -0.5f, 0.0f, //prawy dolny rog
-		 0.0f,  0.5f, 0.0f  //srodkowy gorny rog
+		-0.5f,  -0.5f, 0.0f, //lewy dolny rog
+		 0.5f,  -0.5f, 0.0f, //prawy dolny rog
+		 0.0f,   0.5f, 0.0f,  //srodkowy gorny rog
+		-0.5f/2, 0.0f, 0.0f,
+		 0.5f/2, 0.0f, 0.0f, 
+		 0.0f,  -0.5f, 0.0f  
+
 	};
+
+	GLuint indices[] = {
+		0, 3, 5, //pierwszy trójkąt
+		3, 2, 4, //drugi trójkąt
+		5, 4, 1  //trzeci trójkąt
+	};
+	
 
 	GLFWwindow* window = glfwCreateWindow(800, 800, "OpenGL", NULL, NULL);
 	//szerokosc, wysokosc, tytul, monitor (NULL - okno nie jest pelnoekranowe), share (NULL - brak wspolnego kontekstu)
 
-	if (window == NULL)
+	if (window == NULL) 
 	{
 		std::cout << "Nie udalo sie utworzyc okna :(" << std::endl;
 		glfwTerminate();
@@ -69,10 +80,12 @@ int main()
 	glDeleteShader(vertexShader); //usuwanie shadera wierzcholkowego (nie jest juz potrzebny)
 	glDeleteShader(fragmentShader); //usuwanie shadera fragmentowego (nie jest juz potrzebny)
 
-	GLuint VBO, VAO; //VBO - Vertex Buffer Object, VAO - Vertex Array Object
+	GLuint VBO, VAO, EBO; //VBO - Vertex Buffer Object, VAO - Vertex Array Object
+	//EBO - Element Buffer Object (bufor indeksow)
 
 	glGenVertexArrays(1, &VAO); //generowanie tablicy wierzcholkow
 	glGenBuffers(1, &VBO); //generowanie bufora wierzcholkow
+	glGenBuffers(1, &EBO); //generowanie bufora indeksow
 
 	glBindVertexArray(VAO); //ustawienie tablicy wierzcholkow jako aktywnej
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); //ustawienie bufora jako aktywnego
@@ -86,6 +99,9 @@ int main()
 	//GL_STREAM_DRAW, jeśli dane będą modyfikowane co klatkę
 	//GL_DYNAMIC_DRAW - dane będą często modyfikowane
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); //ustawienie bufora indeksow jako aktywnego
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); //przypisanie danych do bufora indeksow
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //ustawienie atrybutu wierzcholka
 	//0 - indeks atrybutu wierzcholka (zgodny z layout(location = 0) w shaderze)
 	//3 - liczba komponentów atrybutu (x, y, z)
@@ -98,6 +114,7 @@ int main()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //odwiązanie bufora
 	glBindVertexArray(0); //odwiązanie tablicy wierzcholkow
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //odwiązanie bufora indeksow (nie jest konieczne, ponieważ EBO jest związany z VAO)
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -106,11 +123,15 @@ int main()
 		glUseProgram(shaderProgram); //użycie programu shaderowego
 		glBindVertexArray(VAO); 
 
-		glDrawArrays(GL_TRIANGLES, 0, 3); //rysowanie trójkąta
+		//glDrawArrays(GL_TRIANGLES, 0, 3); //rysowanie trójkąta
 		//GL_TRIANGLES - tryb rysowania (trójkąty)
 		//0 - indeks pierwszego wierzcholka
 		//3 - liczba wierzcholkow do narysowania
-		
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0); //rysowanie trójkąta za pomocą indeksów
+		//GL_TRIANGLES - tryb rysowania (trójkąty)
+		//9 - liczba indeksów do narysowania
+		//GL_UNSIGNED_INT - typ danych indeksów
+		//0 - offset do danych indeksów (w tym przypadku dane zaczynają się od początku bufora indeksów)
 		
 		
 		
@@ -120,6 +141,7 @@ int main()
 
 	glDeleteVertexArrays(1, &VAO); //usuwanie tablicy wierzcholkow
 	glDeleteBuffers(1, &VBO); //usuwanie bufora wierzcholkow
+	glDeleteBuffers(1, &EBO); //usuwanie bufora indeksow
 	glDeleteProgram(shaderProgram); //usuwanie programu shaderowego
 
 
