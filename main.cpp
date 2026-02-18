@@ -2,20 +2,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n\0";
-
+#include "shaderClass.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
 int main()
 {
@@ -63,87 +53,42 @@ int main()
 
 	glViewport(0, 0, 800, 800); //ustawienie rozmiaru okna (x, y, szerokosc, wysokosc)
 
+	Shader shaderProgram("default.vert", "default.frag"); //utworzenie programu shaderowego na podstawie plików z kodem shadera
 
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER); //utworzenie shadera wierzcholkowego
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); //przypisanie kodu shadera
-	glCompileShader(vertexShader); //kompilacja shadera
+	VAO VAO1; //utworzenie obiektu VAO
+	VAO1.Bind(); //wiązanie obiektu VAO (ustawienie jako aktywnego
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER); //utworzenie shadera fragmentowego
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL); //przypisanie kodu shadera
-	glCompileShader(fragmentShader); //kompilacja shadera
+	VBO VBO1(vertices, sizeof(vertices)); //utworzenie bufora wierzcholkow na podstawie danych
+	EBO EBO1(indices, sizeof(indices)); //utworzenie bufora indeksow na podstawie danych
 
-	GLuint shaderProgram = glCreateProgram(); //utworzenie programu shaderowego
-	glAttachShader(shaderProgram, vertexShader); //przypisanie shadera wierzcholkowego do programu
-	glAttachShader(shaderProgram, fragmentShader); //przypisanie shadera fragmentowego do programu
-	glLinkProgram(shaderProgram); //linkowanie programu shaderowego
+	VAO1.linkVBO(VBO1, 0); //przypisanie bufora wierzcholkow do obiektu VAO
+	VAO1.Unbind(); //odwiązanie obiektu VAO (ustawienie jako nieaktywnego)
+	VBO1.Unbind(); //odwiązanie bufora wierzcholkow (ustawienie jako nieaktywnego
+	EBO1.Unbind(); //odwiązanie bufora indeksow (ustawienie jako nieaktywnego
+	
 
-	glDeleteShader(vertexShader); //usuwanie shadera wierzcholkowego (nie jest juz potrzebny)
-	glDeleteShader(fragmentShader); //usuwanie shadera fragmentowego (nie jest juz potrzebny)
-
-	GLuint VBO, VAO, EBO; //VBO - Vertex Buffer Object, VAO - Vertex Array Object
-	//EBO - Element Buffer Object (bufor indeksow)
-
-	glGenVertexArrays(1, &VAO); //generowanie tablicy wierzcholkow
-	glGenBuffers(1, &VBO); //generowanie bufora wierzcholkow
-	glGenBuffers(1, &EBO); //generowanie bufora indeksow
-
-	glBindVertexArray(VAO); //ustawienie tablicy wierzcholkow jako aktywnej
-	glBindBuffer(GL_ARRAY_BUFFER, VBO); //ustawienie bufora jako aktywnego
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //przypisanie danych do bufora
-	//GL_ARRAY_BUFFER - typ bufora (wierzcholki)
-	//sizeof(vertices) - rozmiar danych w bajtach
-	//vertices - wskaźnik do danych
-	//GL_STATIC_DRAW - sposób użycia danych (statyczne dane, które będą rzadko modyfikowane)
-	//można użyć GL_DYNAMIC_DRAW, jeśli dane będą często modyfikowane
-	//GL_STREAM_DRAW, jeśli dane będą modyfikowane co klatkę
-	//GL_DYNAMIC_DRAW - dane będą często modyfikowane
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); //ustawienie bufora indeksow jako aktywnego
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); //przypisanie danych do bufora indeksow
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); //ustawienie atrybutu wierzcholka
-	//0 - indeks atrybutu wierzcholka (zgodny z layout(location = 0) w shaderze)
-	//3 - liczba komponentów atrybutu (x, y, z)
-	//GL_FLOAT - typ danych atrybutu
-	//GL_FALSE - normalizacja danych (nie jest potrzebna, ponieważ dane są już w formacie float)
-	//3 * sizeof(float) - rozmiar pojedynczego wierzcholka (w bajtach)
-	//(void*)0 - offset do danych (w tym przypadku dane zaczynają się od początku bufora)
-
-	glEnableVertexAttribArray(0); //włączenie atrybutu wierzcholka
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0); //odwiązanie bufora
-	glBindVertexArray(0); //odwiązanie tablicy wierzcholkow
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //odwiązanie bufora indeksow (nie jest konieczne, ponieważ EBO jest związany z VAO)
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glUseProgram(shaderProgram); //użycie programu shaderowego
-		glBindVertexArray(VAO); 
-
-		//glDrawArrays(GL_TRIANGLES, 0, 3); //rysowanie trójkąta
-		//GL_TRIANGLES - tryb rysowania (trójkąty)
-		//0 - indeks pierwszego wierzcholka
-		//3 - liczba wierzcholkow do narysowania
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0); //rysowanie trójkąta za pomocą indeksów
-		//GL_TRIANGLES - tryb rysowania (trójkąty)
-		//9 - liczba indeksów do narysowania
-		//GL_UNSIGNED_INT - typ danych indeksów
-		//0 - offset do danych indeksów (w tym przypadku dane zaczynają się od początku bufora indeksów)
 		
+		shaderProgram.Activate(); //użycie programu shaderowego
+		VAO1.Bind(); //wiązanie obiektu VAO (ustawienie jako aktywnego)
+		EBO1.Bind(); //wiązanie bufora indeksow (ustawienie jako aktywnego)
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0); //rysowanie trójkątów na podstawie indeksów (tryb rysowania, liczba indeksów, typ danych indeksów, offset)
+
 		
 		
 		glfwSwapBuffers(window);
 		glfwPollEvents(); //sprawdzanie zdarzen (np. klawiatura, myszka, itp.)
 	}
 
-	glDeleteVertexArrays(1, &VAO); //usuwanie tablicy wierzcholkow
-	glDeleteBuffers(1, &VBO); //usuwanie bufora wierzcholkow
-	glDeleteBuffers(1, &EBO); //usuwanie bufora indeksow
-	glDeleteProgram(shaderProgram); //usuwanie programu shaderowego
-
+	VAO1.Delete(); //usunięcie obiektu VAO
+	VBO1.Delete(); //usunięcie bufora wierzcholkow
+	EBO1.Delete(); //usunięcie bufora indeksow
+	shaderProgram.Delete(); //usunięcie programu shaderowego
 
 	glfwDestroyWindow(window); //niszczenie okna
 	glfwTerminate(); //zamykanie biblioteki GLFW
