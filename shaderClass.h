@@ -18,6 +18,8 @@ public:
 
 	void Activate(); //użycie programu shaderowego
 	void Delete(); //usunięcie programu shaderowego
+private:
+	void compileErrors(unsigned int shader, const char* type); //funkcja do sprawdzania błędów kompilacji shaderów i programu shaderowego
 
 };
 

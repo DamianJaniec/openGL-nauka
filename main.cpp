@@ -17,12 +17,12 @@ int main()
 	glfwWindowHintString(GLFW_OPENGL_PROFILE, "core"); //Pakiet funkcji OpenGL
 
 	GLfloat vertices[] = {
-		-0.5f,  -0.5f, 0.0f, //lewy dolny rog
-		 0.5f,  -0.5f, 0.0f, //prawy dolny rog
-		 0.0f,   0.5f, 0.0f,  //srodkowy gorny rog
-		-0.5f/2, 0.0f, 0.0f,
-		 0.5f/2, 0.0f, 0.0f, 
-		 0.0f,  -0.5f, 0.0f  
+		-0.5f,  -0.5f, 0.0f,	0.8f, 0.3f,  0.02f,//lewy dolny rog
+		 0.5f,  -0.5f, 0.0f,	0.8f, 0.3f,  0.02f,//prawy dolny rog
+		 0.0f,   0.5f, 0.0f,	1.0f, 0.6f,  0.32f,//srodkowy gorny rog
+		-0.5f/2, 0.0f, 0.0f,	0.9f, 0.45f, 0.17f,
+		 0.5f/2, 0.0f, 0.0f,	0.9f, 0.45f, 0.17f,
+		 0.0f,  -0.5f, 0.0f,	0.8f, 0.3f,  0.02f  
 
 	};
 
@@ -61,13 +61,14 @@ int main()
 	VBO VBO1(vertices, sizeof(vertices)); //utworzenie bufora wierzcholkow na podstawie danych
 	EBO EBO1(indices, sizeof(indices)); //utworzenie bufora indeksow na podstawie danych
 
-	VAO1.linkVBO(VBO1, 0); //przypisanie bufora wierzcholkow do obiektu VAO
+	VAO1.linkAttrib(VBO1, 0,3,GL_FLOAT,6*sizeof(float), (void*)0); //przypisanie bufora wierzcholkow do obiektu VAO
+	VAO1.linkAttrib(VBO1, 1,3,GL_FLOAT,6*sizeof(float), (void*)(3*sizeof(float))); //przypisanie bufora wierzcholkow do obiektu VAO
 	VAO1.Unbind(); //odwiązanie obiektu VAO (ustawienie jako nieaktywnego)
 	VBO1.Unbind(); //odwiązanie bufora wierzcholkow (ustawienie jako nieaktywnego
 	EBO1.Unbind(); //odwiązanie bufora indeksow (ustawienie jako nieaktywnego
 	
 
-	
+	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale"); //pobranie ID uniformu "scale" z programu shaderowego
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -75,6 +76,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		shaderProgram.Activate(); //użycie programu shaderowego
+		glUniform1f(uniID, -0.5f); //ustawienie wartości uniformu "scale"
 		VAO1.Bind(); //wiązanie obiektu VAO (ustawienie jako aktywnego)
 		EBO1.Bind(); //wiązanie bufora indeksow (ustawienie jako aktywnego)
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0); //rysowanie trójkątów na podstawie indeksów (tryb rysowania, liczba indeksów, typ danych indeksów, offset)
