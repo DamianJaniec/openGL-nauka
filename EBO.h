@@ -5,12 +5,13 @@
 
 class EBO
 {
-public:
 	GLuint ID;
+public:
 	EBO(GLuint* indices, GLsizeiptr size);
 	void Bind();
 	void Unbind();
 	void Delete();
+	GLuint getID() { return ID; }
 };
 
 

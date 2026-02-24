@@ -9,14 +9,17 @@
 
 class Mesh
 {
-public:
+
 	VAO VAO1;
 	VBO VBO1;
 	EBO EBO1;
 
+	GLsizei indexCount;
+
 	//GLuint scaleID;
 	GLfloat scale;
 
+public:
 	Mesh(GLfloat* vertices, GLuint* indices, GLsizeiptr vertSize, GLsizeiptr indSize,short type);
 	void Draw(Shader& shader);
 	void Delete();

@@ -5,13 +5,14 @@
 
 class VBO
 {
-public:
 	GLuint ID;
+public:
 	VBO(GLfloat* vertices, GLsizeiptr size);
 
 	void Bind();
 	void Unbind();
 	void Delete();
+	GLuint getID() { return ID; }
 };
 
 

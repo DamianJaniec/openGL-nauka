@@ -20,7 +20,9 @@ Mesh::Mesh(GLfloat* vertices, GLuint* indices, GLsizeiptr vertSize, GLsizeiptr i
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
+
     scale = 0.0f;
+    indexCount = indSize / sizeof(GLuint);
 }
 void Mesh::Draw(Shader& shader)
 {
@@ -33,7 +35,7 @@ void Mesh::Draw(Shader& shader)
         GLuint uniID = glGetUniformLocation(shader.ID, "scale");
         glUniform1f(uniID, scale);
     }
-    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 }
 void Mesh::Delete()
 {

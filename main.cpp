@@ -44,10 +44,10 @@ int main()
 {
 	init();
 
-	Shader shaderProgramDef("basic.vert", "basic.frag",0);
+	Shader shaderProgramDef(1);
 
-	Mesh triangle(verticesBasic, indices, sizeof(verticesBasic), sizeof(indices),shaderProgramDef.type);
-	
+	Mesh triangle(vertices, indices, sizeof(vertices), sizeof(indices),shaderProgramDef.type);
+	triangle.setScale(0.5f);
 
 	while (!glfwWindowShouldClose(window))
 	{
