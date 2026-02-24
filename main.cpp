@@ -6,18 +6,30 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include "Mesh.h"
 
 void init();
 
 GLFWwindow* window;
 
-GLfloat vertices[] = {
-		-0.5f,  -0.5f, 0.0f, //lewy dolny rog
-		 0.5f,  -0.5f, 0.0f, //prawy dolny rog
-		 0.0f,   0.5f, 0.0f,  //srodkowy gorny rog
+
+
+GLfloat verticesBasic[] = {
+		-0.5f,  -0.5f, 0.0f,//lewy dolny rog
+		 0.5f,  -0.5f, 0.0f,//prawy dolny rog
+		 0.0f,   0.5f, 0.0f,//srodkowy gorny rog
 		-0.5f / 2, 0.0f, 0.0f,
 		 0.5f / 2, 0.0f, 0.0f,
 		 0.0f,  -0.5f, 0.0f
+};
+
+GLfloat vertices[] = {
+		-0.5f,  -0.5f, 0.0f,	1.0f, 1.0f, 1.0f,//lewy dolny rog
+		 0.5f,  -0.5f, 0.0f,	1.0f, 1.0f, 0.0f,//prawy dolny rog
+		 0.0f,   0.5f, 0.0f,	1.0f, 0.0f, 0.0f, //srodkowy gorny rog
+		-0.5f / 2, 0.0f, 0.0f,	0.0f, 1.0f, 1.0f,
+		 0.5f / 2, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+		 0.0f,  -0.5f, 0.0f,    0.0f, 0.0f, 0.0f
 
 };
 
@@ -32,36 +44,26 @@ int main()
 {
 	init();
 
-	Shader shaderProgramDef("default.vert", "default.frag"); //domyślny shader (jeden kolor)
+	Shader shaderProgramDef("basic.vert", "basic.frag",0);
 
-	VAO VAO1;
-	VAO1.Bind();
-
-	VBO VBO1(vertices, sizeof(vertices));
-	EBO EBO1(indices, sizeof(indices));
-
-	VAO1.linkVBO(VBO1, 0);
-	VAO1.Unbind();
-	VBO1.Unbind();
-	EBO1.Unbind();
+	Mesh triangle(verticesBasic, indices, sizeof(verticesBasic), sizeof(indices),shaderProgramDef.type);
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shaderProgramDef.Activate();
-		VAO1.Bind();
-		EBO1.Bind();
+
+		triangle.Draw(shaderProgramDef);
+
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window); 
 		glfwPollEvents();
 	}
 
-
-	VAO1.Delete();
-	VBO1.Delete();
-	EBO1.Delete();
+	triangle.Delete();
 	shaderProgramDef.Delete();
 
 	glfwDestroyWindow(window);

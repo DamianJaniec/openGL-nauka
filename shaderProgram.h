@@ -14,7 +14,8 @@ class Shader
 {
 public:
 	GLuint ID; //ID programu shaderowego
-	Shader(const char* vertexPath, const char* fragmentPath); //konstruktor, który tworzy program shaderowy na podstawie plików z kodem shadera
+	short type;
+	Shader(const char* vertexPath, const char* fragmentPath,short _type); //konstruktor, który tworzy program shaderowy na podstawie plików z kodem shadera
 
 	void Activate(); //użycie programu shaderowego
 	void Delete(); //usunięcie programu shaderowego

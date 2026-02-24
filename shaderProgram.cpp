@@ -16,7 +16,8 @@ std::string get_file_contents(const char* filename)
 	throw(errno);
 }
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* vertexPath, const char* fragmentPath,short _type)
+	: type(_type)
 {
 	std::string vertexCode = get_file_contents(vertexPath);
 	std::string fragmentCode = get_file_contents(fragmentPath);
