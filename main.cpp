@@ -2,23 +2,89 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "shaderProgram.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
+
+void init();
+
+GLFWwindow* window;
+
+GLfloat vertices[] = {
+		-0.5f,  -0.5f, 0.0f, //lewy dolny rog
+		 0.5f,  -0.5f, 0.0f, //prawy dolny rog
+		 0.0f,   0.5f, 0.0f,  //srodkowy gorny rog
+		-0.5f / 2, 0.0f, 0.0f,
+		 0.5f / 2, 0.0f, 0.0f,
+		 0.0f,  -0.5f, 0.0f
+
+};
+
+GLuint indices[] = {
+	0, 3, 5, //pierwszy trójkąt
+	3, 2, 4, //drugi trójkąt
+	5, 4, 1  //trzeci trójkąt
+};
+
+
 int main()
 {
+	init();
 
+	Shader shaderProgramDef("default.vert", "default.frag"); //domyślny shader (jeden kolor)
+
+	VAO VAO1;
+	VAO1.Bind();
+
+	VBO VBO1(vertices, sizeof(vertices));
+	EBO EBO1(indices, sizeof(indices));
+
+	VAO1.linkVBO(VBO1, 0);
+	VAO1.Unbind();
+	VBO1.Unbind();
+	EBO1.Unbind();
+
+	while (!glfwWindowShouldClose(window))
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		shaderProgramDef.Activate();
+		VAO1.Bind();
+		EBO1.Bind();
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
+		glfwSwapBuffers(window); 
+		glfwPollEvents();
+	}
+
+
+	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
+	shaderProgramDef.Delete();
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	return 0;
+}
+
+void init()
+{
 	glfwInit();
 
 	glfwWindowHintString(GLFW_CONTEXT_VERSION_MAJOR, "3"); //wersja OpenGL
 	glfwWindowHintString(GLFW_CONTEXT_VERSION_MINOR, "4"); //wersja OpenGL
 	glfwWindowHintString(GLFW_OPENGL_PROFILE, "core"); //Pakiet funkcji OpenGL
 
-	GLFWwindow* window = glfwCreateWindow(800, 800, "OpenGL", NULL, NULL);
+	window = glfwCreateWindow(800, 800, "OpenGL", NULL, NULL);
 	//szerokosc, wysokosc, tytul, monitor (NULL - okno nie jest pelnoekranowe), share (NULL - brak wspolnego kontekstu)
 
 	if (window == NULL)
 	{
 		std::cout << "Nie udalo sie utworzyc okna :(" << std::endl;
 		glfwTerminate();
-		return -1;
+		exit(-1);
 	}
 
 	glfwMakeContextCurrent(window); //ustawienie "kontekstu" dla okna
@@ -26,20 +92,11 @@ int main()
 	gladLoadGL(); //zaladowanie funkcji OpenGL
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f); //ustawienie koloru tła (r, g, b, a)
+
+
 	glClear(GL_COLOR_BUFFER_BIT); //wyczyszczenie bufora koloru
 	glfwSwapBuffers(window); //zamiana buforów (double buffering)
 
 	glViewport(0, 0, 800, 800); //ustawienie rozmiaru okna (x, y, szerokosc, wysokosc)
 
-	while (!glfwWindowShouldClose(window))
-	{
-		glfwPollEvents(); //sprawdzanie zdarzen (np. klawiatura, myszka, itp.)
-	}
-
-
-
-
-	glfwDestroyWindow(window); //niszczenie okna
-	glfwTerminate(); //zamykanie biblioteki GLFW
-	return 0;
 }
