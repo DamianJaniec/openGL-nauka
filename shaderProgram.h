@@ -8,14 +8,17 @@
 #include <iostream>
 #include <cerrno>
 
+#include "ShaderType.h"
+
 std::string get_file_contents(const char* filename);
 
 class Shader
 {
 public:
 	GLuint ID; //ID programu shaderowego
-	short type;
-	Shader(short _type); //konstruktor, który tworzy program shaderowy na podstawie plików z kodem shadera
+
+	ShaderType type;
+	Shader(ShaderType _type);
 
 	void Activate(); //użycie programu shaderowego
 	void Delete(); //usunięcie programu shaderowego

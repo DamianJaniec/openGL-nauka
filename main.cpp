@@ -44,7 +44,7 @@ int main()
 {
 	init();
 
-	Shader shaderProgramDef(1);
+	Shader shaderProgramDef(ShaderType::DEFAULT);
 
 	Mesh triangle(vertices, indices, sizeof(vertices), sizeof(indices),shaderProgramDef.type);
 	triangle.setScale(0.5f);

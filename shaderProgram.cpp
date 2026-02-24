@@ -16,7 +16,7 @@ std::string get_file_contents(const char* filename)
 	throw(errno);
 }
 
-Shader::Shader(short _type)
+Shader::Shader(ShaderType _type)
 	: type(_type)
 {
 	const char* vertexPath = "basic.vert";
@@ -24,7 +24,7 @@ Shader::Shader(short _type)
 
 	switch (type)
 	{
-	case 1:
+	case ShaderType::DEFAULT:
 		vertexPath = "default.vert";
 		fragmentPath = "default.frag";
 		break;

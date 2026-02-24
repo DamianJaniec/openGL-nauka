@@ -20,7 +20,7 @@ class Mesh
 	GLfloat scale;
 
 public:
-	Mesh(GLfloat* vertices, GLuint* indices, GLsizeiptr vertSize, GLsizeiptr indSize,short type);
+	Mesh(GLfloat* vertices, GLuint* indices, GLsizeiptr vertSize, GLsizeiptr indSize,ShaderType type);
 	void Draw(Shader& shader);
 	void Delete();
 	void setScale(GLfloat _scale) { scale = _scale; }
