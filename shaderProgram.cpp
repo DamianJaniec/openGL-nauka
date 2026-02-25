@@ -28,7 +28,10 @@ Shader::Shader(ShaderType _type)
 		vertexPath = "default.vert";
 		fragmentPath = "default.frag";
 		break;
-
+	case ShaderType::TEXTURE:
+		vertexPath = "texture.vert";
+		fragmentPath = "texture.frag";
+		break;
 	}
 	
 	

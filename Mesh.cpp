@@ -17,13 +17,19 @@ Mesh::Mesh(GLfloat* vertices, GLuint* indices, GLsizeiptr vertSize, GLsizeiptr i
             VAO1.linkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
             VAO1.linkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 			break;
+        case ShaderType::TEXTURE:
+            VAO1.linkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+            VAO1.linkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+			VAO1.linkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+            break;
     }
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
 
     scale = 0.0f;
-    indexCount = indSize / sizeof(GLuint);
+    indexCount = static_cast<GLsizei>(indSize / sizeof(GLuint));
+	texture = nullptr;
 }
 void Mesh::Draw(Shader& shader)
 {
@@ -43,9 +49,13 @@ void Mesh::Draw(Shader& shader)
             break;
         }
         case ShaderType::TEXTURE:
+        {
+            GLuint uniID = glGetUniformLocation(shader.ID, "scale");
+            glUniform1f(uniID, scale);
+            texture->texUnit(shader, "tex0", 0);
+            texture->Bind();
             break;
-        case ShaderType::TEXTURE_COLOR:
-            break;
+        }
         case ShaderType::TRANSFORM:
             break;
     }
@@ -56,4 +66,6 @@ void Mesh::Delete()
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
+	if (texture != nullptr)
+	    texture->Delete();
 }

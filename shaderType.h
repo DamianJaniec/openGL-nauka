@@ -5,7 +5,6 @@ enum class ShaderType {
     BASIC,
     DEFAULT,
     TEXTURE,
-    TEXTURE_COLOR,
     TRANSFORM
 };
 

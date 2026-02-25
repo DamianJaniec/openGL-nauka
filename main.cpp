@@ -1,12 +1,14 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
 
 #include "shaderProgram.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 #include "Mesh.h"
+#include "Texture.h"
 
 void init();
 
@@ -33,38 +35,71 @@ GLfloat vertices[] = {
 
 };
 
+GLfloat verticesBox[] = {
+	-0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f,  // lewy dolny
+	-0.5f,  0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  0.0f, 1.0f,  // lewy górny
+	 0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  1.0f, 1.0f,  // prawy górny 
+	 0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 1.0f,  1.0f, 0.0f   // prawy dolny 
+};
+
 GLuint indices[] = {
 	0, 3, 5, //pierwszy trójkąt
 	3, 2, 4, //drugi trójkąt
 	5, 4, 1  //trzeci trójkąt
 };
 
+GLuint indicesBox[] = {
+	0, 1, 2, //pierwszy trójkąt
+	0, 3, 2  //drugi trójkąt
+};
 
 int main()
 {
 	init();
 
-	Shader shaderProgramDef(ShaderType::DEFAULT);
+	Shader shaderProgramTex(ShaderType::TEXTURE);
+	Mesh square(verticesBox, indicesBox, sizeof(verticesBox), sizeof(indicesBox),shaderProgramTex.type);
+	square.setScale(0.5f);
 
-	Mesh triangle(vertices, indices, sizeof(vertices), sizeof(indices),shaderProgramDef.type);
+	Texture texture("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE); //utworzenie tekstury na podstawie danych z pliku
+	square.setTexture(&texture);
+
+	
+	Shader shaderProgramDef(ShaderType::DEFAULT);
+	Mesh triangle(vertices, indices, sizeof(vertices), sizeof(indices), shaderProgramDef.type);
 	triangle.setScale(0.5f);
+
+	Shader shaderProgramBasic(ShaderType::BASIC);
+	Mesh triangleBasic(verticesBasic, indices, sizeof(verticesBasic), sizeof(indices), shaderProgramBasic.type);
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		shaderProgramDef.Activate();
+		shaderProgramTex.Activate();
+		square.Draw(shaderProgramTex);
 
+		shaderProgramDef.Activate();
 		triangle.Draw(shaderProgramDef);
 
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		shaderProgramBasic.Activate();
+		triangleBasic.Draw(shaderProgramBasic);
+		
 
 		glfwSwapBuffers(window); 
 		glfwPollEvents();
 	}
 
+	square.Delete();
+	texture.Delete();
+	shaderProgramTex.Delete();
+
 	triangle.Delete();
 	shaderProgramDef.Delete();
+
+	triangleBasic.Delete();
+	shaderProgramBasic.Delete();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

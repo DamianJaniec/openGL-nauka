@@ -6,6 +6,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "shaderProgram.h"
+#include "Texture.h"
 
 class Mesh
 {
@@ -19,11 +20,14 @@ class Mesh
 	//GLuint scaleID;
 	GLfloat scale;
 
+	Texture *texture;
+
 public:
 	Mesh(GLfloat* vertices, GLuint* indices, GLsizeiptr vertSize, GLsizeiptr indSize,ShaderType type);
 	void Draw(Shader& shader);
 	void Delete();
 	void setScale(GLfloat _scale) { scale = _scale; }
+	void setTexture(Texture* _texture) { texture = _texture; }
 };
 
 #endif

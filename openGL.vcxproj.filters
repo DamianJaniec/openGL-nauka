@@ -16,6 +16,9 @@
     <Filter Include="Pliki zasobów\Shaders">
       <UniqueIdentifier>{5f2ff28e-be03-46ec-94a0-71279d413b20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki zasobów\Textures">
+      <UniqueIdentifier>{7e451b14-f077-4408-b706-1145b04da659}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -39,12 +42,30 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
       <Filter>Pliki zasobów\Shaders</Filter>
     </None>
     <None Include="default.vert">
+      <Filter>Pliki zasobów\Shaders</Filter>
+    </None>
+    <None Include="basic.frag">
+      <Filter>Pliki zasobów\Shaders</Filter>
+    </None>
+    <None Include="basic.vert">
+      <Filter>Pliki zasobów\Shaders</Filter>
+    </None>
+    <None Include="texture.vert">
+      <Filter>Pliki zasobów\Shaders</Filter>
+    </None>
+    <None Include="texture.frag">
       <Filter>Pliki zasobów\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -64,5 +85,16 @@
     <ClInclude Include="Mesh.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="shaderType.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="pop_cat.png">
+      <Filter>Pliki zasobów\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
